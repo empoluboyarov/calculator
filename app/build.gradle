@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-        applicationId "com.example.evgeniy.calculator"
+        applicationId "com.example.evgeniy.ic_launcher"
         minSdkVersion 17
         targetSdkVersion 23
         versionCode 1
