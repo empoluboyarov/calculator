@@ -2,13 +2,16 @@ package com.example.evgeniy.calculator;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.evgeniy.calculator.calc.CalcOperations;
 import com.example.evgeniy.calculator.enums.OperationType;
 import com.example.evgeniy.calculator.enums.Symbol;
+import com.example.evgeniy.calculator.exceptions.DivizionByZeroException;
 
 import java.util.EnumMap;
 
@@ -119,7 +122,16 @@ public class MainActivity extends AppCompatActivity {
 
         OperationType operTypeTmp = (OperationType)commands.get(Symbol.OPERATION);
 
-        double result = calc(operTypeTmp, getDouble(commands.get(Symbol.FIRST_DIGIT)),getDouble(commands.get(Symbol.SECOND_DIGIT)));
+        double result = 0;
+
+        try {
+            result = calc(operTypeTmp, getDouble(commands.get(Symbol.FIRST_DIGIT)),getDouble(commands.get(Symbol.SECOND_DIGIT)));
+        } catch (DivizionByZeroException e){
+            showToastMessage(R.string.division_zero);
+
+            return;
+        }
+
 
         if (result%1 == 0){
             txtResult.setText(String.valueOf((int)result));
@@ -153,5 +165,11 @@ public class MainActivity extends AppCompatActivity {
         result = Double.valueOf(value.toString().replace(',','.')).doubleValue(); // замена запятой на точку и преобразование стринг в дабл
 
         return result;
+    }
+
+    private void showToastMessage(int messageId){
+        Toast toast = Toast.makeText(this,messageId,Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.TOP,0,100);
+        toast.show();
     }
 }

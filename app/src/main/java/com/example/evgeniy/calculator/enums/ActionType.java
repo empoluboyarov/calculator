@@ -5,7 +5,7 @@ package com.example.evgeniy.calculator.enums;
  */
 public enum ActionType {
     OPERATION,
-    RESULT,
+    CALCULATION,
     CLEAR,
     DIGIT,
     COMMA,
