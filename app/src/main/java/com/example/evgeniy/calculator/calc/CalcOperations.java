@@ -1,4 +1,4 @@
-package com.example.evgeniy.calculator;
+package com.example.evgeniy.calculator.calc;
 
 /**
  * Created by Evgeniy on 30.03.2016.

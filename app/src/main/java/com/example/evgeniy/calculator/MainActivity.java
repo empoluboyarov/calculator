@@ -6,9 +6,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.evgeniy.calculator.calc.CalcOperations;
+import com.example.evgeniy.calculator.enums.OperationType;
+import com.example.evgeniy.calculator.enums.Symbol;
+
 import java.util.EnumMap;
-import java.util.Map;
-import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     private EditText txtResult;
@@ -130,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
     private Double calc(OperationType operType, double a, double b){
         switch (operType){
             case ADD:{
-                return CalcOperations.add(a,b);
+                return CalcOperations.add(a, b);
             }
             case DIVIDE:{
                 return CalcOperations.divide(a,b);
