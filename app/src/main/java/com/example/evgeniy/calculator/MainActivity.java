@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.evgeniy.calculator.calc.CalcOperations;
+import com.example.evgeniy.calculator.enums.ActionType;
 import com.example.evgeniy.calculator.enums.OperationType;
 import com.example.evgeniy.calculator.enums.Symbol;
 import com.example.evgeniy.calculator.exceptions.DivizionByZeroException;
@@ -32,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         //
         txtResult = (EditText)findViewById(R.id.txtResult);
         btnAdd = (Button)findViewById(R.id.butAdd);
-        btnDivide = (Button)findViewById(R.id.butDelete);
+        btnDivide = (Button)findViewById(R.id.butDevide);
         btnMultiply= (Button)findViewById(R.id.butMultiply);
         btnSubtract = (Button)findViewById(R.id.butSubtract);
         // к каждой кнопке добавляем тип операции
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private OperationType operType;
+    private ActionType lastAction;
 
     public void buttonClick(View view){
 
@@ -54,6 +56,11 @@ public class MainActivity extends AppCompatActivity {
             case R.id.butDevide:
             case R.id.butMultiply: { // если нажата одна из четырех кнопок
                 operType = (OperationType) view.getTag(); // получаем тип операции из кнопки
+
+                if(lastAction==ActionType.OPERATION){
+                    commands.put(Symbol.OPERATION,operType);
+                    return;
+                }
 
                 if (!commands.containsKey(Symbol.OPERATION)) {
 
@@ -67,11 +74,13 @@ public class MainActivity extends AppCompatActivity {
                     commands.put(Symbol.OPERATION, operType);
                     commands.remove(Symbol.SECOND_DIGIT);
                 }
+                lastAction = ActionType.OPERATION;
                 break;
             }
             case R.id.butClear:{ //кнопка очистить
                 txtResult.setText("0");//выводит ноль на табло
                 commands.clear();//удаляет все из EnumMap
+                lastAction = ActionType.CLEAR;
                 break;
             }
 
@@ -82,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
                 } else if(!txtResult.getText().toString().contains(",")){
                     txtResult.setText(txtResult.getText()+",");
                 }
-
+                lastAction = ActionType.COMMA;
                 break;
             }
             case R.id.butDelete: {
@@ -91,16 +100,22 @@ public class MainActivity extends AppCompatActivity {
                 if (txtResult.getText().toString().trim().length()==0){
                     txtResult.setText("0");
                 }
+                lastAction = ActionType.DELETE;
                 break;
             }
 
             case R.id.butResult:{
+                if(lastAction == ActionType.CALCULATION) return;
+
                 if(commands.containsKey(Symbol.FIRST_DIGIT)&&commands.containsKey(Symbol.OPERATION)){
                     commands.put(Symbol.SECOND_DIGIT,txtResult.getText());
                     doCalc();
-                    commands.put(Symbol.OPERATION,operType);
-                    commands.remove(Symbol.SECOND_DIGIT);
+                    commands.clear();
+
+                    //commands.put(Symbol.OPERATION,operType);
+                    //commands.remove(Symbol.SECOND_DIGIT);
                 }
+                lastAction = ActionType.CALCULATION;
                 break;
             }
 
@@ -108,12 +123,14 @@ public class MainActivity extends AppCompatActivity {
 
                 if(txtResult.getText().toString().equals("0")
             || (commands.containsKey(Symbol.FIRST_DIGIT) && getDouble(txtResult.getText())
-                        == getDouble(commands.get(Symbol.FIRST_DIGIT)))){// если вводится второе число то нужно сбросить текстовое поле
+                        == getDouble(commands.get(Symbol.FIRST_DIGIT)))
+                        || (lastAction == ActionType.CALCULATION)){// если вводится второе число то нужно сбросить текстовое поле
                     txtResult.setText(view.getContentDescription().toString());
                 }
                 else  {
                     txtResult.setText(txtResult.getText()+view.getContentDescription().toString());
                 }
+                lastAction = ActionType.DIGIT;
             }
         }
     }
@@ -128,7 +145,6 @@ public class MainActivity extends AppCompatActivity {
             result = calc(operTypeTmp, getDouble(commands.get(Symbol.FIRST_DIGIT)),getDouble(commands.get(Symbol.SECOND_DIGIT)));
         } catch (DivizionByZeroException e){
             showToastMessage(R.string.division_zero);
-
             return;
         }
 
