@@ -71,11 +71,21 @@ public class MainActivity extends AppCompatActivity {
             }
 
             case R.id.butComma:{
+                if(commands.containsKey(Symbol.FIRST_DIGIT)&& getDouble(txtResult.getText().toString())==getDouble(commands.get(
+                        Symbol.FIRST_DIGIT.toString()))){
+                    txtResult.setText("0"+view.getContentDescription().toString());
+                } else if(!txtResult.getText().toString().contains(",")){
+                    txtResult.setText(txtResult.getText()+",");
+                }
 
                 break;
             }
             case R.id.butDelete: {
+                txtResult.setText(txtResult.getText().delete(txtResult.getText().length() - 1,txtResult.getText().length()));
 
+                if (txtResult.getText().toString().trim().length()==0){
+                    txtResult.setText("0");
+                }
                 break;
             }
 
@@ -90,9 +100,16 @@ public class MainActivity extends AppCompatActivity {
             }
 
             default:{
-                txtResult.setText(txtResult.getText()+view.getContentDescription().toString());
-            }
 
+                if(txtResult.getText().toString().equals("0")
+            || (commands.containsKey(Symbol.FIRST_DIGIT) && getDouble(txtResult.getText())
+                        == getDouble(commands.get(Symbol.FIRST_DIGIT)))){// если вводится второе число то нужно сбросить текстовое поле
+                    txtResult.setText(view.getContentDescription().toString());
+                }
+                else  {
+                    txtResult.setText(txtResult.getText()+view.getContentDescription().toString());
+                }
+            }
         }
     }
 
